@@ -10,6 +10,8 @@ urlpatterns = [
 
     # DRF
     path('api/v1/accounts/', include('api.v1.accounts.urls', namespace="api_v1_accounts")),
+    path('api/v1/doctors/', include('api.v1.doctors.urls', namespace="api_v1_doctors")),
+    path('api/v1/general/', include('api.v1.general.urls', namespace="api_v1_general")),
 
     # Media & Static
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': SETTINGS.MEDIA_ROOT}),

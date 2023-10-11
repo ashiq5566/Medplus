@@ -1,8 +1,67 @@
-import React from 'react'
+import {React, useState, useEffect} from 'react'
 import { styled } from 'styled-components'
+import { ruppellsAuthConfig } from '../../config/axios';
 
 function CreateDoctor({ isOpen, onClose }) {
     if (!isOpen) return null;
+
+    const [imageName, setImageName] = useState("Upload Image (size < 500kb)");
+    const [inputs, setInputs] = useState({
+        doctorName: "",
+        doctorPhone: "",
+        doctorEmail: "",
+        doctorQualification: "",
+        userName: "",
+        password: "",
+        rePassword: "",
+        location: "",
+    });
+    const [profilePic, setProfilePic] = useState(null);
+    const onChange = (e) => {
+        setInputs({
+            ...inputs,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const createDoctorHandler = () => {
+
+        const formData = new FormData();
+
+        formData.append("name", inputs.doctorName);
+        formData.append("phone", inputs.doctorPhone);
+        formData.append("email", inputs.doctorEmail);
+        formData.append("qualification", inputs.doctorQualification);
+        formData.append("username", inputs.userName);
+        formData.append("password", inputs.password);
+        formData.append("location", inputs.location);
+        formData.append("confirm_password", inputs.rePassword);
+        formData.append("image", profilePic);
+
+
+        ruppellsAuthConfig
+            .post("/doctors/create-doctor/", formData)
+            .then((res) => {
+                const { StatusCode, data } = res.data;
+                if (StatusCode === 6000) {
+                    // console.log(data);
+                    window.location.reload();
+                    // closeHandler();
+                    uploadCallback();
+                } else {
+                    console.log(data);
+                }
+                setTimeout(() => {
+                    setLoading(false);
+                }, 2000);
+            })
+            .catch((err) => {
+                console.log(err);
+                setTimeout(() => {
+                    setLoading(false);
+                }, 2000);
+            });
+    };
 
     return (
         <Container>
@@ -13,44 +72,116 @@ function CreateDoctor({ isOpen, onClose }) {
                         <form method="POST">
                             <div className="form-group">
                                 <label htmlFor="image">Image:</label>
-                                <input type="file" id="file" name="file" required />
+                                <input
+                                    type="file"
+                                    value={inputs.image}
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        setProfilePic(e.target.files[0]);
+                                        setImageName(e.target.files[0].name);
+                                    }}
+                                />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="name">First Name:</label>
-                                <input type="text" id="name" name="name" required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="last_name">Last Name:</label>
-                                <input type="text" id="last_name" name="last_name" required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="qual">Qualifications</label>
-                                <input type="text" id="qual" name="qual" required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="exp">Experience</label>
-                                <input type="text" id="exp" name="exp" required />
+                                <label htmlFor="name">Name:</label>
+                                <input
+                                    type="text"
+                                    name="doctorName"
+                                    value={inputs.doctorName}
+                                    placeholder="Enter Name"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                                />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="phone">Phone</label>
-                                <input type="text" id="phone" name="phone" required />
+                                <input
+                                    type="text"
+                                    name="doctorPhone"
+                                    value={inputs.doctorPhone}
+                                    placeholder="Enter Phone"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email">Email</label>
-                                <input type="email" id="email" name="email" required />
+                                <input
+                                    type="text"
+                                    name="doctorEmail"
+                                    value={inputs.doctorEmail}
+                                    placeholder="Enter email"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="bg">Blood group</label>
-                                <input type="text" id="bg" name="bg" required />
+                                <label htmlFor="qualification">qualification</label>
+                                <input
+                                    type="text"
+                                    name="doctorQualification"
+                                    value={inputs.doctorQualification}
+                                    placeholder="Enter Qualification"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="specialization">Specialization:</label>
-                                <input type="text" id="specialization" name="specialization" required />
+                                <label htmlFor="username">Username</label>
+                                <input
+                                    type="text"
+                                    name="userName"
+                                    value={inputs.userName}
+                                    placeholder="Enter username"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <input
+                                    type="text"
+                                    name="password"
+                                    value={inputs.password}
+                                    placeholder="Enter Password"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="location">Location:</label>
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value={inputs.location}
+                                    placeholder="Enter location"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="repassword">confirm_password:</label>
+                                <input
+                                    type="text"
+                                    name="rePassword"
+                                    value={inputs.rePassword}
+                                    placeholder="Enter password"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
                             </div>
                         </form>
                     </FormContainer>
                     <ButtonContainer>
-                        <Button>
+                        <Button onClick={createDoctorHandler}>
                             Submit
                         </Button>
                         <Button onClick={onClose}>Close</Button>

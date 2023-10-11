@@ -13,9 +13,9 @@ function App() {
       <Routes>
         <Route path="/sign-in" element={<SignIn type="signin" />} />
         <Route path="/*" element={(
-			<PrivateRoute>
-				<DashboardRouter />
-			</PrivateRoute>
+        <PrivateRoute>
+          <DashboardRouter />
+        </PrivateRoute>
         )} />
       </Routes>
     </>

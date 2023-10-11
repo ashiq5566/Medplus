@@ -11,6 +11,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-4$d!b0*j3dj*e8i@i&1o7qsvt4o!330u_081)_s56%k5w6-dac'
+ENCRYPT_KEY= "pbF_1ksm3_M4BZKIesugEBukJ8EZgnoDsbSmutA1C44="
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # False if not in os.environ because of casting above
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     
     'accounts',
     'doctors',  
+    'general'
 ]
 
 MIDDLEWARE = [
