@@ -4,6 +4,14 @@ import { ruppellsAuthConfig } from '../../config/axios';
 
 function CreateDoctor({ isOpen, onClose }) {
     if (!isOpen) return null;
+    const DEPARTMENT_CHOICES = [
+        { value: 'cardiology', label: 'Cardiology' },
+        { value: 'dermatology', label: 'Dermatology' },
+        { value: 'orthopedics', label: 'Orthopedics' },
+        { value: 'pediatrics', label: 'Pediatrics' },
+        { value: 'neurology', label: 'Neurology' },
+        // Add more departments as needed
+    ];
 
     const [imageName, setImageName] = useState("Upload Image (size < 500kb)");
     const [inputs, setInputs] = useState({
@@ -11,6 +19,7 @@ function CreateDoctor({ isOpen, onClose }) {
         doctorPhone: "",
         doctorEmail: "",
         doctorQualification: "",
+        doctorDepartment: "",
         userName: "",
         password: "",
         rePassword: "",
@@ -35,6 +44,7 @@ function CreateDoctor({ isOpen, onClose }) {
         formData.append("username", inputs.userName);
         formData.append("password", inputs.password);
         formData.append("location", inputs.location);
+        formData.append("department", inputs.doctorDepartment);
         formData.append("confirm_password", inputs.rePassword);
         formData.append("image", profilePic);
 
@@ -119,12 +129,40 @@ function CreateDoctor({ isOpen, onClose }) {
                              />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="qualification">qualification</label>
+                                <label htmlFor="qualification">Qualification</label>
                                 <input
                                     type="text"
                                     name="doctorQualification"
                                     value={inputs.doctorQualification}
                                     placeholder="Enter Qualification"
+                                    onChange={(e) => {
+                                        onChange(e);
+                                }}
+                             />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="department">Department</label>
+                                <select
+                                    name="doctorDepartment"
+                                    value={inputs.doctorDepartment}
+                                        onChange={(e) => {
+                                            onChange(e);
+                                    }}
+                                    >
+                                    {DEPARTMENT_CHOICES.map((choice) => (
+                                        <option key={choice.value} value={choice.value}>
+                                            {choice.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="location">Location:</label>
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value={inputs.location}
+                                    placeholder="Enter location"
                                     onChange={(e) => {
                                         onChange(e);
                                 }}
@@ -145,7 +183,7 @@ function CreateDoctor({ isOpen, onClose }) {
                             <div className="form-group">
                                 <label htmlFor="password">Password</label>
                                 <input
-                                    type="text"
+                                    type="password"
                                     name="password"
                                     value={inputs.password}
                                     placeholder="Enter Password"
@@ -154,22 +192,11 @@ function CreateDoctor({ isOpen, onClose }) {
                                 }}
                              />
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="location">Location:</label>
-                                <input
-                                    type="text"
-                                    name="location"
-                                    value={inputs.location}
-                                    placeholder="Enter location"
-                                    onChange={(e) => {
-                                        onChange(e);
-                                }}
-                             />
-                            </div>
+                            
                             <div className="form-group">
                                 <label htmlFor="repassword">confirm_password:</label>
                                 <input
-                                    type="text"
+                                    type="password"
                                     name="rePassword"
                                     value={inputs.rePassword}
                                     placeholder="Enter password"

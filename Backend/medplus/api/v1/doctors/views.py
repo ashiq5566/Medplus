@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import ( 
     
     CreateDoctorSerializer,
+    DoctorSerializer
 )
 from doctors.models import Doctor
 
@@ -32,6 +33,7 @@ def create_doctor(request):
         qualification = request.data['qualification']
         image = request.data['image']
         location = request.data['location']
+        department = request.data['department']
         username = request.data['username']
         password = request.data['password']
         confirm_password = request.data['confirm_password']
@@ -45,6 +47,7 @@ def create_doctor(request):
                     qualification=qualification,
                     image=image,
                     location=location,
+                    department=department,
                     username=username,
                     password=password
                 )
@@ -79,6 +82,36 @@ def create_doctor(request):
                 "title":"Failed",
                 "message":serialized_data._errors
             }
+        }
+            
+    return Response(response_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def doctors(request):
+    """
+    View function to get doctor.
+
+    """
+    if Doctor.objects.filter(is_deleted=False).exists():
+        doctors =  Doctor.objects.filter(is_deleted=False)
+        serialized_data = DoctorSerializer(doctors, context={"request": request}, many=True)
+        response_data = {
+            "StatusCode": 6000,
+            "data":{
+                "title": "Success",
+                "data": serialized_data.data
+            }
+        }
+    else:
+        response_data = {
+            "StatusCode": 6001,
+            "data":{
+                "title": "Failed",
+                "message": "Doctors Not found"
+            }
+
         }
             
     return Response(response_data, status=status.HTTP_200_OK)

@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 import SearchBox from '../../small/SearchBox';
 import {
     BsHouseAddFill
   } from 'react-icons/bs';
 import CreateDoctor from '../../modal/CreateDoctor';
+import { ruppellsAuthConfig } from '../../../config/axios';
 
 
 function Doctors() {
@@ -17,6 +18,64 @@ function Doctors() {
     const closeModal = () => {
     setIsModalOpen(false);
     };
+
+    const [tableData, setTableData] = useState({
+        starting_count: 0,
+        // skelton: [],
+        data: [],
+    });
+
+    useEffect(() => {
+        // const skelton = [
+        //     {
+        //         slug: "name",
+        //         title: "Name",
+        //     },
+        //     {
+        //         slug: "email",
+        //         title: "Email",
+        //     },
+        //     {
+        //         slug: "phone",
+        //         title: "Phone",
+        //     },
+        //     {
+        //         slug: "qualification",
+        //         title: "Qualification",
+        //     },
+        //     {
+        //         slug: "department",
+        //         title: "Department",
+        //     },
+        // ];
+
+        ruppellsAuthConfig
+            .get("/doctors/")
+            .then((res) => {
+                const { StatusCode, data } = res.data;
+                console.log(data);
+                if (StatusCode === 6000) {
+
+                    const apiData = data.data.map((item, i) => ({
+                        ...item
+                       
+                    }));
+                    setTableData({
+                        // skelton,
+                        starting_count: 0,
+                        data: apiData,
+                    });
+                } else {
+                    //error page
+                    setEmpty(true);
+                    console.log(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log("Error in fetching updates", err);
+            });
+    }, []);
+
       
     return (
         <MainContainer>
@@ -30,21 +89,23 @@ function Doctors() {
                 <StyledTable>
                     <thead>
                     <tr>
-                        <th>ID No</th>
                         <th>Name</th>
-                        <th>Fellowships</th>
+                        <th>Email</th>
+                        <th>Qualification</th>
                         <th>Department</th>
-                        <th>Action</th>
+                        <th>Phone</th>
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>MD001</td>
-                            <td>Dr Albin</td>
-                            <td>MBBS</td>
-                            <td>PAEDIATRICS</td>
-                            <td>Edit</td>
+                    {tableData.data.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.email}</td>
+                            <td>{item.qualification}</td>
+                            <td>{item.department}</td>
+                            <td>{item.phone}</td>
                         </tr>
+                    ))}
                     </tbody>
                 </StyledTable>
                 <CreateDoctor isOpen={isModalOpen} onClose={closeModal} />
