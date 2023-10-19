@@ -21,3 +21,4 @@ media/**
 *.ini
 .git_credentials
 gitpush
+*.env
