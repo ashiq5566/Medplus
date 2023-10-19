@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import searchIcon from "/icons/search.svg"
 
-function SearchBox() {
+function SearchBox({ onSearch }) {
   return (
     <Bottom>
         <SearchContainer>
@@ -10,7 +10,7 @@ function SearchBox() {
                 <label htmlFor="search">
                     <img src={searchIcon} alt="search icon" />
                 </label>
-                <input type="search" id="search" placeholder='Search...' />
+                <input type="search" id="search" placeholder='Search...' onChange={onSearch} />
             </div>
         </SearchContainer>
     </Bottom>

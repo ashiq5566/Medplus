@@ -10,6 +10,16 @@ import { ruppellsAuthConfig } from '../../../config/axios';
 
 function Doctors() {
     const [isModalOpen, setIsModalOpen] = useState(false);  
+    const [searchInput, setSearchInput] = useState('');
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
+    
+    const filterDoctors = () => {
+        const filtered = tableData.data.filter((item) =>
+          item.name.toLowerCase().includes(searchInput.toLowerCase())
+        );
+        setFilteredDoctors(filtered);
+      };
+
     const openModal = () => {
         setIsModalOpen(true);
       };
@@ -25,29 +35,12 @@ function Doctors() {
         data: [],
     });
 
+    const handleSearchInput = (e) => {
+        setSearchInput(e.target.value);
+        filterDoctors();
+      };
+
     useEffect(() => {
-        // const skelton = [
-        //     {
-        //         slug: "name",
-        //         title: "Name",
-        //     },
-        //     {
-        //         slug: "email",
-        //         title: "Email",
-        //     },
-        //     {
-        //         slug: "phone",
-        //         title: "Phone",
-        //     },
-        //     {
-        //         slug: "qualification",
-        //         title: "Qualification",
-        //     },
-        //     {
-        //         slug: "department",
-        //         title: "Department",
-        //     },
-        // ];
 
         ruppellsAuthConfig
             .get("/doctors/")
@@ -80,7 +73,7 @@ function Doctors() {
     return (
         <MainContainer>
             <Top>
-                <SearchBox />
+                <SearchBox onSearch={handleSearchInput} />
                 <Button onClick={openModal}>
                     <BsHouseAddFill className='icon' /> Add
                 </Button>

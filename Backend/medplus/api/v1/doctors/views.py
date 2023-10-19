@@ -1,6 +1,7 @@
 import requests
 import json
 import phonenumbers
+from django.db.models import Q
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -94,8 +95,15 @@ def doctors(request):
     View function to get doctor.
 
     """
+    search_query = request.GET.get('search_query')
     if Doctor.objects.filter(is_deleted=False).exists():
         doctors =  Doctor.objects.filter(is_deleted=False)
+        if search_query:
+            doctors = Doctor.objects.filter(
+                Q(name__icontains=search_query) |
+                Q(qualification__icontains=search_query) |
+                Q(location__icontains=search_query)
+            )
         serialized_data = DoctorSerializer(doctors, context={"request": request}, many=True)
         response_data = {
             "StatusCode": 6000,

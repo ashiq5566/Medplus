@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     
     'accounts',
     'doctors',  
-    'general'
+    'general',
+    'payments'
 ]
 
 MIDDLEWARE = [
@@ -167,3 +168,7 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+STRIPE_SECRET_KEY = 'sk_test_51O2RfRSHy7xAt7koCUjOCiRrnqUcs6p36NaUO5er71E8CoH2J4rwNjF2PCLSgFXACmXq40EUMoZ5z9EkfZTXxhTD000Pw4FoSd'
+SITE_URL = 'http://localhost:5173'
+# STRIPE_WEBHOOK_SECRET = 
