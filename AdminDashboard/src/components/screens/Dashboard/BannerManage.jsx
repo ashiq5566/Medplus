@@ -3,6 +3,7 @@ import { styled } from 'styled-components'
 import { useLocation } from 'react-router-dom';
 import QueryString from 'query-string';
 import { API_URL } from '../../../config/index';
+import ApplePay from './ApplePay';
 
 function BannerManage() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function BannerManage() {
 				Checkout
 			</button>
 		</form>
+		<ApplePay />
 	</Section>
   )
 }
