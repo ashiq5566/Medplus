@@ -1,8 +1,10 @@
 import json
 import os
 
+from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework import status
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -23,7 +25,7 @@ def stripe_checkout(request):
     checkout_session = stripe.checkout.Session.create(
         line_items=[
             {
-                'price': 'price_1O2TeRSHy7xAt7koRapUHdOI',
+                'price': 'price_1O51VoSETQixXbm9B8p3bLp7',
                 'quantity': 1,
             },
         ],
@@ -126,3 +128,18 @@ def create_payment(request):
 def get_config(request):
     publishable_key = settings.STRIPE_PUBLISHABLE_KEY
     return JsonResponse({'publishableKey': publishable_key})
+
+
+@api_view(['POST'])
+@permission_classes([])
+def create_payment_intent(request):
+    try:
+        amount = request.data.get('amount')  # Ensure you get the correct amount for your use-case
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency='usd',  
+            payment_method_types=['card', 'apple_pay'],
+        )
+        return Response({'clientSecret': payment_intent.client_secret}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

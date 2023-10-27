@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import QueryString from 'query-string';
 import { API_URL } from '../../../config/index';
 import ApplePay from './ApplePay';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 function BannerManage() {
   const location = useLocation();
@@ -23,6 +25,7 @@ function BannerManage() {
 			);
 		}
 	}, []);
+	const stripePromise = loadStripe('pk_test_51O2RfRSHy7xAt7kovIi8gtrWlBvAgG4pB9CGWVfxPwGiiGW9iCD1cjZhJM5AkG33z5LsUcVtGmXbiXmGWLYTjMqO00NvR49TdJ');
   return (
     <Section>
 		<div className='product'>
@@ -43,7 +46,10 @@ function BannerManage() {
 				Checkout
 			</button>
 		</form>
-		<ApplePay />
+		
+		<Elements stripe={stripePromise}>
+			<ApplePay />
+        </Elements>
 	</Section>
   )
 }
