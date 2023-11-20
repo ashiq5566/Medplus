@@ -1,6 +1,3 @@
-import requests
-import json
-import phonenumbers
 from django.db.models import Q
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -13,10 +10,17 @@ from .serializers import (
     DoctorSerializer
 )
 from doctors.models import Doctor
-
+from .serializers import QRCodeSerializer
 from api.v1.general.decorators import group_required
-
-
+from rest_framework import generics
+from doctors.models import QRCode
+from django.core.files.base import ContentFile
+from .functions import generate_qr_code_image
+from django_excel import make_response
+import csv
+from django.http import HttpResponse
+from django.db.models import Q
+from openpyxl import Workbook
 
 
 @api_view(['POST'])
@@ -41,7 +45,7 @@ def create_doctor(request):
 
         if not Doctor.objects.filter(username=username, is_deleted=False).exists():
             if password == confirm_password:
-                Doctor.objects.create(
+                doctor = Doctor.objects.create(
                     name=name,
                     phone=phone,
                     email=email,
@@ -52,6 +56,14 @@ def create_doctor(request):
                     username=username,
                     password=password
                 )
+                
+                # qr code generate
+                qr_response = generate_qr_code_image(phone)
+                qr_codes = QRCode.objects.create(
+                    doctor=doctor
+                )
+                qr_codes.code.save(f'doctor_qr_{qr_codes.id}.png', ContentFile(qr_response.content), save=True)
+                
                 response_data = {
                     "StatusCode": 6000,
                     "data":{
@@ -96,6 +108,7 @@ def doctors(request):
 
     """
     search_query = request.GET.get('search_query')
+    download_excel = request.GET.get('download_excel')
     if Doctor.objects.filter(is_deleted=False).exists():
         doctors =  Doctor.objects.filter(is_deleted=False)
         if search_query:
@@ -112,6 +125,39 @@ def doctors(request):
                 "data": serialized_data.data
             }
         }
+        
+        if download_excel:
+            # Generate Excel file and return as response
+            headers = ['Name','email', 'department', 'phone', 'Qualification', 'Location']  # Add more fields as needed
+            data = []
+
+            for doctor in doctors:
+                data.append([
+                    str(doctor.name),
+                    str(doctor.email),
+                    str(doctor.department),
+                    str(doctor.phone),
+                    str(doctor.qualification),
+                    str(doctor.location),
+                ])
+
+            # Create a workbook and add a worksheet
+            workbook = Workbook()
+            worksheet = workbook.active
+
+            # Write headers
+            worksheet.append(headers)
+
+            # Write data
+            for row in data:
+                worksheet.append(row)
+
+            # Create response
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=doctors_list.xlsx'
+            workbook.save(response)
+
+            return response 
     else:
         response_data = {
             "StatusCode": 6001,

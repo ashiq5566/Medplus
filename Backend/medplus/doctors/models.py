@@ -46,3 +46,8 @@ class Doctor(BaseModel):
             self.auto_id = auto_id
 
         super(Doctor, self).save(*args, **kwargs)
+        
+
+class QRCode(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, blank=True)
+    code = models.ImageField(max_length=255)

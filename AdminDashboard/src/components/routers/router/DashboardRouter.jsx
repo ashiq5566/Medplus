@@ -7,6 +7,7 @@ import SideBar from '../../includes/SideBar'
 import SignIn from '../../screens/auth/SignIn'
 import Doctors from '../../screens/Dashboard/Doctors'
 import BannerManage from '../../screens/Dashboard/BannerManage'
+import QRCodeScanner from '../../screens/Dashboard/QRCodeScanner'
 
 
 const DashboardRouter = () => {
@@ -24,8 +25,7 @@ const DashboardRouter = () => {
 					<Routes>
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="doctor" element={<Doctors />} />
-						<Route path="banner-manage" element={<BannerManage />} />
-						<Route path="banner-manage" element={<BannerManage />} />
+						<Route path="banner-manage" element={<QRCodeScanner />} />
 					</Routes>
 				</Screen>
 			</Container>

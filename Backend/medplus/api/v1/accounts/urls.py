@@ -5,7 +5,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .views import (
-        user_login
+        user_login,
+        doctor_login
 )
 
 app_name = "api_v1_accounts"
@@ -13,6 +14,7 @@ app_name = "api_v1_accounts"
 urlpatterns = [
     # login
     re_path(r"^user-login/$", user_login),
+    re_path(r"^doctor-login/$", doctor_login),
 
 
     

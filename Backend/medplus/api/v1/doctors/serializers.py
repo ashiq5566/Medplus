@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from doctors.models import Doctor
+from doctors.models import QRCode
+
 
 class CreateDoctorSerializer(serializers.Serializer):
     name = serializers.CharField()
@@ -16,5 +18,10 @@ class CreateDoctorSerializer(serializers.Serializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
+        fields = '__all__'
+        
+class QRCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QRCode
         fields = '__all__'
     

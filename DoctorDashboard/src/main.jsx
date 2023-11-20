@@ -5,6 +5,8 @@ import nebula from '../src/img/c_nebula.jpg';
 import stars from '../src/img/stars.jpg';
 import space from '../src/img/space.jpg';
 import earth from '../src/img/earth.jpg';
+import galaxy from '../src/img/galaxy.jpg';
+
 
 
 
@@ -46,7 +48,7 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotation.x = -0.5 * Math.PI;
 plane.receiveShadow = true;
 
-const gridHelper = new THREE.GridHelper(30);
+// const gridHelper = new THREE.GridHelper(30);
 // scene.add(gridHelper)
 
 const sphereGeometry = new THREE.SphereGeometry(4, 50, 50)
@@ -56,9 +58,17 @@ const sphereMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load(earth)
 });
 
+const sphere2Geometry = new THREE.SphereGeometry(4, 60, 60);
+const sphere2Material = new THREE.MeshBasicMaterial({
+    map: textureLoader.load(space)
+});
+const sphere2 = new THREE.Mesh(sphere2Geometry, sphere2Material);
+scene.add(sphere2);
+sphere2.position.set(0, 15, 10);
+
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
-scene.add(sphere)
-sphere.position.set(-10, 10, 0)  
+sphere2.add(sphere)
+sphere.position.x = 40;
 sphere.castShadow = true;
 
 const ambientLight = new THREE.AmbientLight(0x333333);
@@ -78,21 +88,15 @@ renderer.setClearColor(0xFFEA00)
 // scene.background = textureLoader.load(starts);
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 scene.background = cubeTextureLoader.load([
-    nebula,
-    nebula,
-    nebula,
-    nebula,
-    nebula,
-    nebula
+    galaxy,
+    galaxy,
+    galaxy,
+    galaxy,
+    galaxy,
+    galaxy
 ]);
 
-const sphere2Geometry = new THREE.SphereGeometry(4, 60, 60);
-const sphere2Material = new THREE.MeshBasicMaterial({
-    map: textureLoader.load(space)
-});
-const sphere2 = new THREE.Mesh(sphere2Geometry, sphere2Material);
-scene.add(sphere2);
-sphere2.position.set(0, 15, 10);
+
 // box2.material.map = textureLoader.load(space);
 
 const gui = new dat.GUI();
@@ -101,11 +105,15 @@ const gui = new dat.GUI();
 let step = 0;
 let speed = 0.01;
 
+
 function animate(time) {
   box.rotation.x = time / 1000;
   box.rotation.y = time / 1000;
 
-  step += speed;
+  sphere2.rotateY(0.01);
+  sphere.rotateY(0.01);
+
+  // step += speed;
   sphere.position.y = 20 * Math.abs(Math.sin(step));
 
   renderer.render(scene, camera);

@@ -1,24 +1,26 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components';
-import { useLocation, useNavigate, Link, NavLink } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
 import {
-  BsCart3,
-  BsGrid1X2Fill,
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsListCheck,
-  BsMenuButtonWideFill,
-  BsFillGearFill,
 } from 'react-icons/bs';
+import logoutIcon from "/icons/logout.svg";
+import useAuthStore from '../hooks/useAuthStore';
+
 
 function SideBar() {
 	const navigate = useNavigate()
 	const [activeNavItem, setActiveNavItem] = useState(null);
+	const { logout } = useAuthStore();
+
 
 	const handleItemClick = (navItem) => {
 		setActiveNavItem(navItem);
 	};
+	const handleLogout = () => {
+        return logout();
+    };
 
   return (
 	
@@ -27,6 +29,12 @@ function SideBar() {
 			<SidebarBrand>
 				Welcome Admin
 			</SidebarBrand>
+			<Logout onClick={handleLogout}>
+                <div className="left">
+                    <img className='' src={logoutIcon} alt="logout icon" />
+                </div>
+                <span>Logout</span>
+            </Logout>
 		</SidebarTitle>
 		<SidebarList>
 			<SidebarListItem >
@@ -120,4 +128,22 @@ const SidebarLink = styled(NavLink)`
 		font-weight: bold;
 		color: red;
 	}
+`;
+const Logout = styled.div`
+    cursor: pointer;
+    width: 100%;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+
+    .left img {
+        width: 22px;
+    }
+    span {
+        font-size: 18px;
+        color: #fff;
+    }
 `;
