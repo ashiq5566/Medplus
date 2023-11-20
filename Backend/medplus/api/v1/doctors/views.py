@@ -16,11 +16,10 @@ from rest_framework import generics
 from doctors.models import QRCode
 from django.core.files.base import ContentFile
 from .functions import generate_qr_code_image
-from django_excel import make_response
-import csv
 from django.http import HttpResponse
 from django.db.models import Q
 from openpyxl import Workbook
+import pandas as pd
 
 
 @api_view(['POST'])
@@ -169,3 +168,68 @@ def doctors(request):
         }
             
     return Response(response_data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def upload_doctor_excel(request):
+    
+    if 'file' in request.FILES:
+        file = request.FILES['file']
+
+        if file.name.endswith('.xls') or file.name.endswith('.xlsx'):
+            df = pd.read_excel(file)
+            doctors_data = df.to_dict(orient='records')
+            if doctors_data:
+                for doctor_data in doctors_data:
+                    doctor_instance = Doctor.objects.create(
+                        name=doctor_data['name'],
+                        email=doctor_data['email'],
+                        department=doctor_data['department'],
+                        phone=str(doctor_data['phone']),
+                        qualification=doctor_data['Qualification'],
+                        location=doctor_data['Location'],
+                        username=doctor_data['username'],
+                        password=doctor_data['password']
+                        
+                    )
+                    # qr code generate
+                    qr_response = generate_qr_code_image(doctor_instance.phone)
+                    qr_codes = QRCode.objects.create(
+                        doctor=doctor_instance
+                    )
+                    qr_codes.code.save(f'doctor_qr_{qr_codes.id}.png', ContentFile(qr_response.content), save=True)
+                    
+                    response_data = {
+                        "StatusCode":6000,
+                        "data":{
+                            "title":"Success",
+                            "message":"Doctors are created with QR codes"
+                        }
+                    }
+            else:
+                response_data = {
+                    "StatusCode":6001,
+                    "data":{
+                        "title":"Failed",
+                        "message":"File submitted is empty"
+                    }
+                }
+        else:
+            response_data = {
+                "StatusCode":6001,
+                "data":{
+                    "title":"Failed",
+                    "message":"invalid file format"
+                }
+            }
+    else:
+        response_data = {
+            "StatusCode":6001,
+            "data":{
+                "title":"Failed",
+                "message":"no file chosen"
+            }
+        }
+
+    return Response(response_data, status=status.HTTP_201_CREATED)

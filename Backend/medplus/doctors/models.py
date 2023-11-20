@@ -51,3 +51,6 @@ class Doctor(BaseModel):
 class QRCode(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, blank=True)
     code = models.ImageField(max_length=255)
+    
+    def __str__(self):
+        return self.doctor.name
